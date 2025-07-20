@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Danh sách thuốc</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <div id="product-list"></div>
+
+  <div class="header">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+    </div>
+    <button class="add-button">+</button>
   </div>
 
-  <script src="main.js"></script>
+  <div id="products"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
