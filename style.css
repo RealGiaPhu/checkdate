@@ -1,52 +1,39 @@
 body {
-  font-family: monospace;
-  background-color: #e0fff0;
-  margin: 0;
+  font-family: sans-serif;
   padding: 20px;
 }
 
-.container {
-  max-width: 800px;
-  margin: auto;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  padding: 6px;
+  font-size: 14px;
+  width: 200px;
+}
+
+.add-button {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .product {
-  display: flex;
-  align-items: center;
-  background: white;
+  border: 1px solid #ddd;
   padding: 10px;
   margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.product img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  margin-right: 20px;
-}
-
-.product-info {
-  flex: 1;
-}
-
-.progress-bar {
-  height: 15px;
-  background-color: #4ade80;
-  margin-top: 5px;
   border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: #22c55e;
-  transition: width 0.5s;
 }
 
 .expired {
-  border: 2px solid red;
-  background-color: #ffe0e0;
+  color: red;
+  font-weight: bold;
 }
