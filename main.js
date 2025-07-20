@@ -1,40 +1,40 @@
-const sheetAPI = "https://api.sheetbest.com/sheets/1f8a7655-ea7e-4052-8041-e0c9daba7bc8";
-const productList = document.getElementById("product-list");
-
-function daysLeft(expireDateStr) {
-  const today = new Date();
-  const expireDate = new Date(expireDateStr);
-  const diffTime = expireDate - today;
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+async function fetchData() {
+  const res = await fetch("https://api.sheetbest.com/sheets/1f8a7655-ea7e-4052-8041-e0c9daba7bc8");
+  const data = await res.json();
+  return data;
 }
 
-function createProductCard(product) {
-  const days = daysLeft(product.HSD);
-  const totalDays = 60; // giả định 60 ngày là tối đa
-  const percent = Math.max(0, Math.min(100, (days / totalDays) * 100));
-  const expired = days <= 0;
+function createProductCard(item) {
+  const expiredDate = new Date(item.HSD);
+  const now = new Date();
+  const timeDiff = expiredDate - now;
+  const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  const expiredText = daysLeft < 0 ? "Đã hết hạn" : `Còn ${daysLeft} ngày`;
 
-  const wrapper = document.createElement("div");
-  wrapper.className = `product ${expired ? 'expired' : ''}`;
-  wrapper.innerHTML = `
-    <img src="${product.image}" alt="img">
-    <div class="product-info">
-      <div><strong>${product.name}</strong></div>
-      <div>HSD: ${product.HSD} (${days} ngày)</div>
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: ${percent}%; background-color: ${expired ? '#f87171' : '#22c55e'};"></div>
-      </div>
+  return `
+    <div class="product" data-name="${item.Ten.toLowerCase()}">
+      <strong>${item.Ten}</strong><br>
+      Hạn sử dụng: ${item.HSD} <br>
+      <span class="${daysLeft < 0 ? 'expired' : ''}">${expiredText}</span>
     </div>
   `;
-  return wrapper;
 }
 
-fetch(sheetAPI)
-  .then(res => res.json())
-  .then(data => {
-    const sorted = data.sort((a, b) => new Date(a.HSD) - new Date(b.HSD));
-    sorted.forEach(product => {
-      const card = createProductCard(product);
-      productList.appendChild(card);
-    });
+function renderProducts(products) {
+  const container = document.getElementById("products");
+  container.innerHTML = products.map(createProductCard).join("");
+}
+
+function setupSearch(data) {
+  const input = document.getElementById("searchInput");
+  input.addEventListener("input", () => {
+    const keyword = input.value.toLowerCase();
+    const filtered = data.filter(item => item.Ten.toLowerCase().includes(keyword));
+    renderProducts(filtered);
   });
+}
+
+fetchData().then(data => {
+  renderProducts(data);
+  setupSearch(data);
+});
