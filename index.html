@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thuốc của tôi</title>
+</head>
+<body>
+  <h2>Thêm thuốc mới</h2>
+  <input id="ten" placeholder="Tên thuốc"><br>
+  <input id="hsd" type="date"><br>
+  <input id="mota" placeholder="Mô tả"><br>
+  <input id="img" placeholder="Link ảnh"><br>
+  <button onclick="themThuoc()">Thêm</button>
+
+  <hr>
+  <h2>Danh sách thuốc</h2>
+  <div id="ds"></div>
+
+  <script>
+    const API = "https://sheet.best/api/sheets/YOUR_ID_HERE"; // Thay bằng sheet.best URL
+
+    async function themThuoc() {
+      const data = {
+        "Tên thuốc": document.getElementById("ten").value,
+        "Hạn sử dụng": document.getElementById("hsd").value,
+        "Mô tả": document.getElementById("mota").value,
+        "Ảnh": document.getElementById("img").value
+      };
+      await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      loadThuoc(); // reload danh sách
+    }
+
+    async function loadThuoc() {
+      const res = await fetch(API);
+      const ds = await res.json();
+      document.getElementById("ds").innerHTML = ds.map(item => `
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+          <h3>${item["Tên thuốc"]}</h3>
+          <img src="${item["Ảnh"]}" width="100"><br>
+          <b>HSD:</b> ${item["Hạn sử dụng"]}<br>
+          <p>${item["Mô tả"]}</p>
+        </div>
+      `).join('');
+    }
+
+    loadThuoc();
+  </script>
+</body>
+</html>
