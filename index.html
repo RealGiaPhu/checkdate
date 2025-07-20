@@ -2,21 +2,26 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Checking Date</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheckDate</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <div class="header">
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+  <div class="container">
+    <h1>Danh sách thuốc</h1>
+    <div class="top-bar">
+      <input type="text" id="searchInput" placeholder="Tìm tên thuốc..." />
+      <button id="addBtn">+</button>
     </div>
-    <button class="add-button">+</button>
+
+    <div id="formContainer" class="hidden">
+      <input type="text" id="nameInput" placeholder="Tên thuốc" required />
+      <input type="date" id="expInput" required />
+      <button id="submitBtn">Thêm</button>
+    </div>
+
+    <div id="productList"></div>
   </div>
-
-  <div id="products"></div>
-
   <script src="script.js"></script>
 </body>
 </html>
