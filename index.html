@@ -2,49 +2,73 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Thuốc của tôi</title>
+  <title>Danh sách thuốc</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .thuoc { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+    .thuoc img { max-width: 150px; border-radius: 8px; }
+    .countdown { font-weight: bold; color: #b30000; margin-top: 5px; }
+  </style>
 </head>
 <body>
-  <h2>Thêm thuốc mới</h2>
-  <input id="ten" placeholder="Tên thuốc"><br>
-  <input id="hsd" type="date"><br>
-  <input id="img" placeholder="Link ảnh"><br>
-  <button onclick="themThuoc()">Thêm</button>
-
-  <hr>
-  <h2>Danh sách thuốc</h2>
-  <div id="ds"></div>
+  <h2>💊 Danh sách thuốc còn hạn sử dụng</h2>
+  <div id="danhsach"></div>
 
   <script>
-    const API = "https://sheet.best/api/sheets/YOUR_ID_HERE"; // <== THAY BẰNG API CỦA BẠN
+    const API = "https://api.sheetbest.com/sheets/1f8a7655-ea7e-4052-8041-e0c9daba7bc8";
 
-    async function themThuoc() {
-      const data = {
-        "Tên thuốc": document.getElementById("ten").value,
-        "Hạn sử dụng": document.getElementById("hsd").value,
-        "Ảnh": document.getElementById("img").value
-      };
-      await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      loadThuoc();
-    }
-
-    async function loadThuoc() {
+    async function layDanhSach() {
       const res = await fetch(API);
       const ds = await res.json();
-      document.getElementById("ds").innerHTML = ds.map(item => `
-        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-          <h3>${item["Tên thuốc"]}</h3>
-          <img src="${item["Ảnh"]}" width="100"><br>
-          <b>HSD:</b> ${item["Hạn sử dụng"]}<br>
-        </div>
-      `).join('');
+
+      const container = document.getElementById("danhsach");
+      container.innerHTML = "";
+
+      ds.forEach(thuoc => {
+        const ten = thuoc["Tên thuốc"];
+        const hsd = thuoc["Hạn sử dụng"];
+        const img = thuoc["Ảnh"];
+
+        const div = document.createElement("div");
+        div.className = "thuoc";
+        div.innerHTML = `
+          <h3>${ten}</h3>
+          <img src="${img}" alt="${ten}">
+          <p><b>Hạn sử dụng:</b> ${hsd}</p>
+          <div class="countdown" id="cd-${ten.replace(/\s+/g, '')}">⏳ Đang tải...</div>
+        `;
+        container.appendChild(div);
+
+        demNguoc(hsd, `cd-${ten.replace(/\s+/g, '')}`);
+      });
     }
 
-    loadThuoc();
+    function demNguoc(hsd, elementId) {
+      const han = new Date(hsd);
+      const el = document.getElementById(elementId);
+
+      function capNhat() {
+        const now = new Date();
+        const diff = han - now;
+
+        if (diff <= 0) {
+          el.textContent = "❌ Đã hết hạn!";
+          el.style.color = "gray";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+        el.textContent = `⏳ Còn ${days} ngày ${hours} giờ ${minutes} phút`;
+      }
+
+      capNhat();
+      setInterval(capNhat, 60000); // Cập nhật mỗi phút
+    }
+
+    layDanhSach();
   </script>
 </body>
 </html>
